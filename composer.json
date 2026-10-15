@@ -1,0 +1,25 @@
+{
+    "name": "pascualcode/reservas_demotec",
+    "description": "Prueba tecnica: gestion de reservas de alojamientos",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jose Manuel Pascual",
+            "email": "josemanuel.pascualmora@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "twig/twig": "^3.30"
+    },
+    "config": {
+        "platform": {
+            "php":"8.2.0"
+        }
+    }
+}
