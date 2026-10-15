@@ -1,8 +1,11 @@
 -- 
 -- reservas.sql - Base de datos para el sistema de reservas
+-- Para importar la BD ejecuta el siguiente comando en PSHELL:
+--   mysql -u root -p --default-character-set=utf8mb4 -e "source database/reservas.sql"
 -- Crea la base de datos y las siguientes tablas:
--- 1. reserva: almacena la informacion de las reservas realizadas por los huespedes.
--- 2. reserva_evento: almacena los eventos relacionados con las reservas, como cambios de estado o notas adicionales.
+--   1. reserva: almacena la informacion de las reservas realizadas por los huespedes.
+--   2. reserva_evento: almacena los eventos relacionados con las reservas, como cambios de estado.
+-- Uso de SET SESSION sql_mode = 'TRADITIONAL' para asegurar que se cumplan las restricciones de integridad y evitar errores silenciosos.
 --
 SET NAMES utf8mb4;
 SET SESSION sql_mode = 'TRADITIONAL';
