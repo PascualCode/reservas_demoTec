@@ -15,7 +15,6 @@ final class ErrorHandler
 
     public function handle(Throwable $e): void
     {
-        // 1. Si es una HttpException → JSON con su código, su mensaje y sus cabeceras
         if ($e instanceof HttpException) {
             JsonResponse::send(
                 ['error' => $e->getMessage()],
@@ -31,10 +30,6 @@ final class ErrorHandler
             }
             JsonResponse::send($body, 500);
         }
-        // 2. Si es cualquier otra cosa:
-        //    a) Escribe el error completo en el log
-        //    b) Prepara un 500 con el mensaje "Error interno del servidor"
-        //    c) Solo si $this->debug es true, añade el mensaje real en una clave 'detalle'
     }
 
     public static function convertWarningsToExceptions(): void
