@@ -26,4 +26,13 @@ final class ReservaService
         $reserva['eventos'] = $this->repository->findEventos($id);
         return $reserva;
     }
+
+    /**
+     * Busca todas las reservas y devuelve un array de arrays asociativos con los datos de las reservas.
+     * @return array<int, array<string, mixed>>
+     */
+    public function getAll(): array
+    {
+        return $this->repository->findAll();
+    }
 }

@@ -29,9 +29,7 @@ try {
 
     $router = new Router();
 
-    $router->add('GET', '/api/reservas', function (): void {
-        JsonResponse::send(['mensaje' => 'Listado de reservas (pendiente)']);
-    });
+    $router->add('GET', '/api/reservas', $apiController->listado(...));
 
     $router->add('POST', '/api/reservas', function (): void {
         JsonResponse::send(['mensaje' => 'Creando una nueva reserva (pendiente)']);

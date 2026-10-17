@@ -15,7 +15,7 @@ final class ReservaApiController
     {
     }
 
-    // Devuelve la información de una reserva en formato JSON
+    // Devuelve la informacion de una reserva en formato JSON
     public function detalle(string $id): void
     {
         try {
@@ -25,5 +25,16 @@ final class ReservaApiController
         }
         
         JsonResponse::send($reserva);
+    }
+
+    // Devuelve todas las reservas en JSON junto con el total: {"reservas": [...], "total": N}
+    public function listado(): void
+    {
+        $reservas = $this->service->getAll();
+        $response = [
+            'reservas' => $reservas,
+            'total' => count($reservas)
+        ];
+        JsonResponse::send($response);
     }
 }

@@ -8,6 +8,9 @@ use PDO;
 
 final class ReservaRepository
 {
+
+    private const COLUMNAS = 'id, nombre_huesped, email_huesped, nombre_alojamiento, fecha_entrada, fecha_salida, estado, importe, notas, fecha_creacion';
+
     public function __construct(private PDO $pdo)
     {
     }
@@ -16,7 +19,7 @@ final class ReservaRepository
     /** @return array<string, mixed>|null */
     public function findById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare('SELECT id, nombre_huesped, email_huesped, nombre_alojamiento, fecha_entrada, fecha_salida, estado, importe, notas, fecha_creacion FROM reserva WHERE id = :id');
+        $stmt = $this->pdo->prepare('SELECT ' . self::COLUMNAS . ' FROM reserva WHERE id = :id');
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch();
         
@@ -32,6 +35,16 @@ final class ReservaRepository
     {
         $stmt = $this->pdo->prepare('SELECT id, tipo, descripcion, fecha_creacion FROM reserva_evento WHERE reserva_id = :reserva_id ORDER BY fecha_creacion, id');
         $stmt->execute(['reserva_id' => $reservaId]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Busca todas las reservas y devuelve un array de arrays asociativos con los datos de las reservas.
+     * @return array<int, array<string, mixed>>
+     */
+    public function findAll(): array
+    {
+        $stmt = $this->pdo->query('SELECT ' . self::COLUMNAS . ' FROM reserva ORDER BY fecha_entrada, id');
         return $stmt->fetchAll();
     }
 }
