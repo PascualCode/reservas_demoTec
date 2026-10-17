@@ -20,9 +20,10 @@ final class ReservaApiController
     {
         try {
             $reserva = $this->service->getById((int)$id);
-            JsonResponse::send($reserva);
         } catch (ReservaNotFoundException $e) {
             throw new HttpException(404, 'Reserva no encontrada');
         }
+        
+        JsonResponse::send($reserva);
     }
 }

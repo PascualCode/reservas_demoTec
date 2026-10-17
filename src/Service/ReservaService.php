@@ -17,9 +17,9 @@ final class ReservaService
     /** @return array<string, mixed> */
     public function getById(int $id): array
     {
-        $reserva['eventos'] = $this->repository->findById($id);
+        $reserva = $this->repository->findById($id);
 
-        if ($reserva['eventos'] === null) {
+        if ($reserva === null) {
             throw new ReservaNotFoundException($id);
         }
 
