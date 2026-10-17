@@ -25,7 +25,7 @@ final class Router
         // Quita la query string de la URI
         $uri = parse_url($uri, PHP_URL_PATH);
         if (!is_string($uri)) {
-            throw new HttpException(400, 'Peticion no válida');
+            throw new HttpException(400, 'Petición no válida');
         }
         // Recorre las rutas: si la ruta encaja y el método también → llama al handler con los parámetros y termina
         foreach ($this->routes as $route) {
@@ -44,7 +44,7 @@ final class Router
         }
         // Al terminar: si hay métodos permitidos → 405 con cabecera Allow; si no → 404
         if (!empty($allowedMethods)) {
-            throw new HttpException(405, 'Metodo no permitido', ['Allow' => implode(', ', $allowedMethods)]);
+            throw new HttpException(405, 'Método no permitido', ['Allow' => implode(', ', $allowedMethods)]);
         } else {
             throw new HttpException(404, 'Recurso no encontrado');
         }

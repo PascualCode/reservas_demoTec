@@ -22,14 +22,13 @@ final class ErrorHandler
                 $e->getHeaders(),
             );
             return;
-        } else {
-            error_log((string) $e);
-            $body = ['error' => 'Error interno del servidor'];
-            if ($this->debug) {
-                $body['detalle'] = $e->getMessage();
-            }
-            JsonResponse::send($body, 500);
         }
+        error_log((string) $e);
+        $body = ['error' => 'Error interno del servidor'];
+        if ($this->debug) {
+            $body['detalle'] = $e->getMessage();
+        }
+        JsonResponse::send($body, 500);
     }
 
     public static function convertWarningsToExceptions(): void
