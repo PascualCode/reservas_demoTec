@@ -16,14 +16,17 @@ final class ErrorHandler
     // Maneja una excepción y envía una respuesta JSON con el código de estado y las cabeceras indicadas
     public function handle(Throwable $e): void
     {
+        // Errores esperados (400, 404, 405…): su mensaje está escrito para el cliente
         if ($e instanceof HttpException) {
-            JsonResponse::send(
-                ['error' => $e->getMessage()],
-                $e->getStatusCode(),
-                $e->getHeaders(),
-            );
+            $body = ['error' => $e->getMessage()];
+            if ($e instanceof ValidationException) {
+                $body['errores'] = $e->getErrores();
+            }
+            JsonResponse::send($body, $e->getStatusCode(), $e->getHeaders());
             return;
         }
+
+        // Errores inesperados: el detalle va al log y nunca al cliente, salvo en desarrollo
         error_log((string) $e);
         $body = ['error' => 'Error interno del servidor'];
         if ($this->debug) {

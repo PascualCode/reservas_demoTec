@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Domain\ReservaFiltros;
+
 use PDO;
 
 final class ReservaRepository
@@ -22,7 +24,7 @@ final class ReservaRepository
         $stmt = $this->pdo->prepare('SELECT ' . self::COLUMNAS . ' FROM reserva WHERE id = :id');
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch();
-        
+
         if ($row === false) {
             return null;
         }
@@ -42,9 +44,39 @@ final class ReservaRepository
      * Busca todas las reservas y devuelve un array de arrays asociativos con los datos de las reservas.
      * @return array<int, array<string, mixed>>
      */
-    public function findAll(): array
+    public function findAll(ReservaFiltros $filtros): array
     {
-        $stmt = $this->pdo->query('SELECT ' . self::COLUMNAS . ' FROM reserva ORDER BY fecha_entrada, id');
+        $condiciones = [];
+        $parametros = [];
+
+        if ($filtros->estado !== null) {
+            $condiciones[] = 'estado = :estado';
+            $parametros['estado'] = $filtros->estado->value;
+        }
+
+        if ($filtros->desde !== null) {
+            $condiciones[] = 'fecha_salida > :desde';
+            $parametros['desde'] = $filtros->desde;
+        }
+
+        if ($filtros->hasta !== null) {
+            $condiciones[] = 'fecha_entrada <= :hasta';
+            $parametros['hasta'] = $filtros->hasta;
+        }
+
+        if ($filtros->q !== null) {
+            $condiciones[] = 'nombre_huesped LIKE :q';
+            $parametros['q'] = '%' . addcslashes($filtros->q, '%_\\') . '%';
+        }
+
+        $sql = 'SELECT ' . self::COLUMNAS . ' FROM reserva';
+        if ($condiciones !== []) {
+            $sql .= ' WHERE ' . implode(' AND ', $condiciones);
+        }
+        $sql .= ' ORDER BY fecha_entrada, id';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($parametros);
         return $stmt->fetchAll();
     }
 }

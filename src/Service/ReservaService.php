@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Domain\ReservaNotFoundException;
 use App\Repository\ReservaRepository;
+use App\Domain\ReservaFiltros;
 
 final class ReservaService
 {
@@ -31,8 +32,8 @@ final class ReservaService
      * Busca todas las reservas y devuelve un array de arrays asociativos con los datos de las reservas.
      * @return array<int, array<string, mixed>>
      */
-    public function getAll(): array
+    public function getAll(ReservaFiltros $filtros): array
     {
-        return $this->repository->findAll();
+        return $this->repository->findAll($filtros);
     }
 }
