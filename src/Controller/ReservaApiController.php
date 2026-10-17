@@ -8,7 +8,7 @@ use App\Domain\ReservaNotFoundException;
 use App\Http\HttpException;
 use App\Http\JsonResponse;
 use App\Service\ReservaService;
-use DateTimeImmutable;
+use App\Validation\Fecha;
 use App\Domain\ReservaFiltros;
 use App\Domain\EstadoReserva;
 use App\Http\ValidationException;
@@ -57,13 +57,6 @@ final class ReservaApiController
         return $valor === '' ? null : $valor;
     }
 
-    // Comprueba que la fecha tiene formato AAAA-MM-DD y que existe.
-    private function esFechaValida(string $fecha): bool
-    {
-        $objeto = DateTimeImmutable::createFromFormat('!Y-m-d', $fecha);
-        return $objeto !== false && $objeto->format('Y-m-d') === $fecha;
-    }
-
     // Crea un objeto ReservaFiltros a partir de los parametros de la query string, validando los valores y lanzando ValidationException si hay errores.
     private function crearFiltros(array $query): ReservaFiltros
     {
@@ -79,16 +72,16 @@ final class ReservaApiController
         }
 
         $desde = $this->texto($query, 'desde');
-        if ($desde !== null && !$this->esFechaValida($desde)) {
+        if ($desde !== null && !Fecha::esValida($desde)) {
             $errores['desde'] = 'Fecha no válida, usa el formato AAAA-MM-DD';
         }
 
         $hasta = $this->texto($query, 'hasta');
-        if ($hasta !== null && !$this->esFechaValida($hasta)) {
+        if ($hasta !== null && !Fecha::esValida($hasta)) {
             $errores['hasta'] = 'Fecha no válida, usa el formato AAAA-MM-DD';
         }
 
-        if ($desde !== null && $hasta !== null && $this->esFechaValida($desde) && $this->esFechaValida($hasta)) {
+        if ($desde !== null && $hasta !== null && Fecha::esValida($desde) && Fecha::esValida($hasta)) {
             if ($desde > $hasta) {
                 $errores['hasta'] = 'No puede ser anterior a la fecha desde';
             }
