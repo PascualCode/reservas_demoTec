@@ -6,6 +6,7 @@ namespace App\Http;
 
 final class JsonResponse
 {
+    // Envía una respuesta JSON con el código de estado y las cabeceras indicadas
     /** @param array<string, string> $headers */
     public static function send(mixed $data, int $status = 200, array $headers = []): void
     {

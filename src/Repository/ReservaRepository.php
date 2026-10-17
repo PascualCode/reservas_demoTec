@@ -12,6 +12,7 @@ final class ReservaRepository
     {
     }
 
+    //Busca una reserva por su ID y devuelve un array asociativo con los datos de la reserva o null si no se encuentra.
     /** @return array<string, mixed>|null */
     public function findById(int $id): ?array
     {
@@ -25,6 +26,7 @@ final class ReservaRepository
         return $row;
     }
 
+    //Busca todos los eventos asociados a una reserva por su ID y devuelve un array de arrays asociativos con los datos de los eventos.
     /** @return array<int, array<string, mixed>> */
     public function findEventos(int $reservaId): array
     {

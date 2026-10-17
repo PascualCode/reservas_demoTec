@@ -13,6 +13,7 @@ final class ErrorHandler
     {
     }
 
+    // Maneja una excepción y envía una respuesta JSON con el código de estado y las cabeceras indicadas
     public function handle(Throwable $e): void
     {
         if ($e instanceof HttpException) {
@@ -31,6 +32,7 @@ final class ErrorHandler
         JsonResponse::send($body, 500);
     }
 
+    // Convierte los warnings de PHP en excepciones que se pueden gestionar por el manejador de errores
     public static function convertWarningsToExceptions(): void
     {
         set_error_handler(function (int $severity, string $message, string $file, int $line): bool {

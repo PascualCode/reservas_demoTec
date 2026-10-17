@@ -6,9 +6,11 @@ namespace App\Http;
 
 final class Router
 {
+    // Array de rutas, cada ruta es un array con 'method', 'regex' y 'handler'
     /** @var array<int, array{method: string, regex: string, handler: callable}> */
     private array $routes = [];
 
+    // Añade una ruta al router con su método, path y handler
     public function add(string $method, string $path, callable $handler): void
     {
         // Convierte la ruta en una expresión regular y guárdala con su método y su handler
@@ -20,6 +22,8 @@ final class Router
             'handler' => $handler
         ];
     }
+
+    // Dispara la ruta correspondiente según el método y la URI, o lanza una excepción si no hay coincidencia
     public function dispatch(string $method, string $uri): void
     {
         // Quita la query string de la URI
