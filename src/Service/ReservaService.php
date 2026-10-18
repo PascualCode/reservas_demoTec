@@ -7,7 +7,7 @@ namespace App\Service;
 use App\Domain\ReservaNotFoundException;
 use App\Repository\ReservaRepository;
 use App\Domain\ReservaFiltros;
-use APP\Validation\ReservaValidator;
+use App\Validation\ReservaValidator;
 use App\Domain\EstadoReserva;
 
 use DateTimeImmutable;

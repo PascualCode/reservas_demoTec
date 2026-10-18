@@ -119,9 +119,9 @@ final class ReservaApiController
             throw new HttpException(400, 'El cuerpo de la petición no es un JSON válido');
         }
 
-        if (!is_array($datos))
+        if (!is_array($datos)){
             throw new HttpException(400, 'Se esperaba un objeto JSON');
-
+        }            
         return $datos;
     }
 
