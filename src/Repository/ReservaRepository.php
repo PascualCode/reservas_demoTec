@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Domain\ReservaFiltros;
 
+use Throwable;
 use PDO;
 
 final class ReservaRepository
@@ -78,5 +79,64 @@ final class ReservaRepository
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($parametros);
         return $stmt->fetchAll();
+    }
+
+    /** Inserta una reserva y devuelve su id. */
+    public function insert(array $datos): int
+    {
+        $sql = 'INSERT INTO reserva (nombre_huesped, email_huesped, nombre_alojamiento, fecha_entrada,
+                                fecha_salida, estado, importe, notas, fecha_creacion)
+                VALUES (:nombre_huesped, :email_huesped, :nombre_alojamiento, :fecha_entrada,
+                                :fecha_salida, :estado, :importe, :notas, :fecha_creacion)';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'nombre_huesped' => $datos['nombre_huesped'],
+            'email_huesped' => $datos['email_huesped'],
+            'nombre_alojamiento' => $datos['nombre_alojamiento'],
+            'fecha_entrada' => $datos['fecha_entrada'],
+            'fecha_salida' => $datos['fecha_salida'],
+            'estado' => $datos['estado'],
+            'importe' => $datos['importe'],
+            'notas' => $datos['notas'],
+            'fecha_creacion' => $datos['fecha_creacion']
+        ]);
+
+        return (int) $this->pdo->lastInsertId();
+    }
+
+    /** Añade un evento al historial de una reserva. */
+    public function insertEvento(int $reservaId, string $tipo, string $descripcion, string $fechaCreacion): void
+    {
+        $sql = 'INSERT INTO reserva_evento (reserva_id, tipo, descripcion, fecha_creacion) 
+                VALUES (:reserva_id, :tipo, :descripcion, :fecha_creacion)';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'reserva_id' => $reservaId,
+            'tipo' => $tipo,
+            'descripcion' => $descripcion,
+            'fecha_creacion' => $fechaCreacion
+        ]);
+    }
+
+    /**
+     * Ejecuta $operacion dentro de una transacción: si algo falla, se deshace todo.
+     *
+     * @template T
+     * @param callable(): T $operacion
+     * @return T
+     */
+    public function enTransaccion(callable $operacion): mixed
+    {
+        $this->pdo->beginTransaction();
+        try {
+            $resultado = $operacion();
+            $this->pdo->commit();
+            return $resultado;
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
     }
 }

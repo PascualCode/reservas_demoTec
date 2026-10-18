@@ -12,6 +12,7 @@ use App\Validation\Fecha;
 use App\Domain\ReservaFiltros;
 use App\Domain\EstadoReserva;
 use App\Http\ValidationException;
+use JsonException;
 
 final class ReservaApiController
 {
@@ -41,6 +42,14 @@ final class ReservaApiController
             'total' => count($reservas)
         ];
         JsonResponse::send($response);
+    }
+
+    // Crea una reserva a partir del JSON del cuerpo. Responde 201 con la reserva y la cabecera Location.
+    public function crear(): void
+    {
+        $datos = $this->leerJson();
+        $reserva = $this->service->crear($datos);
+        JsonResponse::send($reserva, 201, ['Location' => '/api/reservas/' . $reserva['id']]);
     }
 
     // Devuelve el parametro como texto sin espacios, o null si no viene o esta vacio.
@@ -97,6 +106,23 @@ final class ReservaApiController
         }
 
         return new ReservaFiltros($estado, $desde, $hasta, $q);
+    }
+
+    /** Lee el cuerpo de la petición como JSON. Lanza 400 si no es un objeto JSON válido. */
+    private function leerJson(): array
+    {
+        $cuerpo = file_get_contents('php://input');
+
+        try {
+            $datos = json_decode($cuerpo, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            throw new HttpException(400, 'El cuerpo de la petición no es un JSON válido');
+        }
+
+        if (!is_array($datos))
+            throw new HttpException(400, 'Se esperaba un objeto JSON');
+
+        return $datos;
     }
 
 }

@@ -10,8 +10,11 @@ use App\Repository\ReservaRepository;
 use App\Service\ReservaService;
 use App\Controller\ReservaApiController;
 use App\Database\ConnectionFactory;
+use App\Validation\ReservaValidator;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+date_default_timezone_set('Europe/Madrid');
 
 ini_set('display_errors', '0');
 ErrorHandler::convertWarningsToExceptions();
@@ -24,16 +27,14 @@ try {
 
     $pdo = ConnectionFactory::createConnection($config);
     $repository = new ReservaRepository($pdo);
-    $service = new ReservaService($repository);
+    $service = new ReservaService($repository, new ReservaValidator());
     $apiController = new ReservaApiController($service);
 
     $router = new Router();
 
     $router->add('GET', '/api/reservas', $apiController->listado(...));
 
-    $router->add('POST', '/api/reservas', function (): void {
-        JsonResponse::send(['mensaje' => 'Creando una nueva reserva (pendiente)']);
-    });
+    $router->add('POST', '/api/reservas', $apiController->crear(...));
 
     $router->add('PATCH', '/api/reservas/{id}/estado', function (string $id): void {
         JsonResponse::send(['mensaje' => "Actualizando la reserva {$id} (pendiente)"]);
