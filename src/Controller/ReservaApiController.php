@@ -12,6 +12,7 @@ use App\Validation\Fecha;
 use App\Domain\ReservaFiltros;
 use App\Domain\EstadoReserva;
 use App\Http\ValidationException;
+use App\Domain\TransicionNoPermitidaException;
 use JsonException;
 
 final class ReservaApiController
@@ -50,6 +51,27 @@ final class ReservaApiController
         $datos = $this->leerJson();
         $reserva = $this->service->crear($datos);
         JsonResponse::send($reserva, 201, ['Location' => '/api/reservas/' . $reserva['id']]);
+    }
+
+    // Cambia el estado de una reserva: {"estado": "confirmada" | "cancelada"}. Responde 200 con la reserva actualizada.
+    public function cambiarEstado(string $id): void
+    {
+        $datos = $this->leerJson();
+        $valor = $datos['estado'] ?? null;
+        $nuevo = is_string($valor) ? EstadoReserva::tryFrom($valor) : null;
+        if ($nuevo === null) {
+            throw new ValidationException(['estado' => 'Estado no válido. Valores permitidos: confirmada, cancelada']);
+        }
+
+        try {
+            $reserva = $this->service->cambiarEstado((int) $id, $nuevo);
+        } catch (ReservaNotFoundException) {
+            throw new HttpException(404, 'Reserva no encontrada');
+        } catch (TransicionNoPermitidaException $e) {
+            throw new HttpException(409, $e->getMessage());
+        }
+
+        JsonResponse::send($reserva);
     }
 
     // Devuelve el parametro como texto sin espacios, o null si no viene o esta vacio.
@@ -119,9 +141,9 @@ final class ReservaApiController
             throw new HttpException(400, 'El cuerpo de la petición no es un JSON válido');
         }
 
-        if (!is_array($datos)){
+        if (!is_array($datos)) {
             throw new HttpException(400, 'Se esperaba un objeto JSON');
-        }            
+        }
         return $datos;
     }
 

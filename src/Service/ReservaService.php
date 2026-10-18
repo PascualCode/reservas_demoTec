@@ -9,6 +9,7 @@ use App\Repository\ReservaRepository;
 use App\Domain\ReservaFiltros;
 use App\Validation\ReservaValidator;
 use App\Domain\EstadoReserva;
+use App\Domain\transicionNoPermitidaException;
 
 use DateTimeImmutable;
 
@@ -45,7 +46,6 @@ final class ReservaService
 
     /**
      * Valida y crea una reserva nueva (siempre pendiente) con su evento "creada".
-     *
      * @param array<string, mixed> $datos
      * @return array<string, mixed>
      */
@@ -55,12 +55,37 @@ final class ReservaService
         $datosLimpios = $this->validator->validar($datos);
         $fechaActual = (new DateTimeImmutable())->format('Y-m-d H:i:s');
 
-        $id = $this->repository->enTransaccion(function() use ($datosLimpios, $fechaActual): int {
+        $id = $this->repository->enTransaccion(function () use ($datosLimpios, $fechaActual): int {
             $datosLimpios['estado'] = EstadoReserva::Pendiente->value;
             $datosLimpios['fecha_creacion'] = $fechaActual;
             $id = $this->repository->insert($datosLimpios);
             $this->repository->insertEvento($id, 'creada', 'Reserva creada', $fechaActual);
             return $id;
+        });
+
+        return $this->getById($id);
+    }
+
+    /**
+     * Cambia el estado de una reserva y añade el evento al historial, todo en una transacción.
+     * @return array<string, mixed>
+     */
+    public function cambiarEstado(int $id, EstadoReserva $nuevo): array
+    {
+
+        $fechaActual = (new DateTimeImmutable())->format('Y-m-d H:i:s');
+
+        $this->repository->enTransaccion(function() use ($id, $nuevo, $fechaActual): void{
+            $actual = $this->repository->findEstadoParaActualizar($id);
+            if ($actual === null) {
+                throw new ReservaNotFoundException($id);
+            }
+            if (!$actual->puedeCambiarA($nuevo)) {
+                throw new TransicionNoPermitidaException($actual, $nuevo);
+            }
+            $this->repository->updateEstado($id, $nuevo);
+            $this->repository->insertEvento($id, $nuevo->value, "Estado cambiado de {$actual->value} a {$nuevo->value}", $fechaActual);
+
         });
 
         return $this->getById($id);

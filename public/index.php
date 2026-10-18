@@ -36,9 +36,7 @@ try {
 
     $router->add('POST', '/api/reservas', $apiController->crear(...));
 
-    $router->add('PATCH', '/api/reservas/{id}/estado', function (string $id): void {
-        JsonResponse::send(['mensaje' => "Actualizando la reserva {$id} (pendiente)"]);
-    });
+    $router->add('PATCH', '/api/reservas/{id}/estado', $apiController->cambiarEstado(...));
 
     $router->add('GET', '/reservas', function (): void {
         JsonResponse::send(['mensaje' => 'Listado de reservas (pendiente)']);

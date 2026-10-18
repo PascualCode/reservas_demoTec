@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Domain\ReservaFiltros;
+use App\Domain\EstadoReserva;
 
 use Throwable;
 use PDO;
@@ -138,5 +139,34 @@ final class ReservaRepository
             $this->pdo->rollBack();
             throw $e;
         }
+    }
+
+    /** Devuelve el estado actual de la reserva y BLOQUEA su fila hasta el final de la transacción. */
+    public function findEstadoParaActualizar(int $id): ?EstadoReserva
+    {
+
+        $sql = 'SELECT estado FROM reserva WHERE id = :id FOR UPDATE';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'id' => $id
+        ]);
+
+        $valor = $stmt->fetchColumn();
+        if ($valor === false) {
+            return null;
+        }
+        return EstadoReserva::from($valor);
+
+    }
+
+    /** Cambia el estado de una reserva. */
+    public function updateEstado(int $id, EstadoReserva $estado): void
+    {
+        $sql = 'UPDATE reserva SET estado = :estado WHERE id = :id';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'estado' => $estado->value,
+            'id' => $id
+        ]);
     }
 }
