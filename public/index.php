@@ -24,6 +24,8 @@ ini_set('display_errors', '0');
 ErrorHandler::convertWarningsToExceptions();
 
 $debug = false;
+$twig = null;
+$esApi = str_starts_with($_SERVER['REQUEST_URI'], '/api/');
 
 try {
     $config = Config::fromFile(__DIR__ . '/../.env');
@@ -62,5 +64,5 @@ try {
     $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
 } catch (Throwable $e) {
-    (new ErrorHandler($debug))->handle($e);
+    (new ErrorHandler($debug, $esApi, $twig))->handle($e);
 }
