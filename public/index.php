@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Config\Config;
+use App\Controller\ReservaWebController;
 use App\Http\ErrorHandler;
 use App\Http\JsonResponse;
 use App\Http\Router;
@@ -39,8 +40,13 @@ try {
     $repository = new ReservaRepository($pdo);
     $service = new ReservaService($repository, new ReservaValidator());
     $apiController = new ReservaApiController($service);
+    $webController = new ReservaWebController($service, $twig);
 
     $router = new Router();
+
+    $router->add('GET', '/', function (): void {
+        header('Location: /reservas', true, 302);
+    });
 
     $router->add('GET', '/api/reservas', $apiController->listado(...));
 
@@ -48,11 +54,7 @@ try {
 
     $router->add('PATCH', '/api/reservas/{id}/estado', $apiController->cambiarEstado(...));
 
-    $router->add('GET', '/reservas', function () use ($twig): void {
-        echo $twig->render('reservas/listado.html.twig', [
-            'titulo' => 'Reservas'
-        ]);
-    });
+    $router->add('GET', '/reservas', $webController->listado(...));
 
     $router->add('GET', '/reservas/{id}', function (string $id): void {
         JsonResponse::send(['mensaje' => "Detalle de la reserva {$id} (pendiente)"]);
@@ -62,6 +64,6 @@ try {
 
     $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
 
-    } catch (Throwable $e) {
+} catch (Throwable $e) {
     (new ErrorHandler($debug))->handle($e);
 }
