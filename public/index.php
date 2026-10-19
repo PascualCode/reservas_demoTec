@@ -12,6 +12,10 @@ use App\Controller\ReservaApiController;
 use App\Database\ConnectionFactory;
 use App\Validation\ReservaValidator;
 
+
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 date_default_timezone_set('Europe/Madrid');
@@ -24,6 +28,12 @@ $debug = false;
 try {
     $config = Config::fromFile(__DIR__ . '/../.env');
     $debug = $config->get('APP_ENV') === 'dev';
+
+    $twig = new Environment(new FilesystemLoader(__DIR__ . '/../templates'), [
+        'autoescape' => 'html',
+        'strict_variables' => true,
+        'cache' => $debug ? false : __DIR__ . '/../var/cache/twig',
+    ]);
 
     $pdo = ConnectionFactory::createConnection($config);
     $repository = new ReservaRepository($pdo);
@@ -38,8 +48,10 @@ try {
 
     $router->add('PATCH', '/api/reservas/{id}/estado', $apiController->cambiarEstado(...));
 
-    $router->add('GET', '/reservas', function (): void {
-        JsonResponse::send(['mensaje' => 'Listado de reservas (pendiente)']);
+    $router->add('GET', '/reservas', function () use ($twig): void {
+        echo $twig->render('reservas/listado.html.twig', [
+            'titulo' => 'Reservas'
+        ]);
     });
 
     $router->add('GET', '/reservas/{id}', function (string $id): void {
