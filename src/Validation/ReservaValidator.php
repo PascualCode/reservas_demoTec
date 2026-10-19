@@ -52,8 +52,6 @@ final class ReservaValidator
         if ($fechaSalida !== null) {
             if (!Fecha::esValida($fechaSalida)) {
                 $this->errores['fecha_salida'] = 'Fecha no válida, usa el formato AAAA-MM-DD';
-            } elseif ($fechaEntrada < $this->hoy) {
-                $this->errores['fecha_salida'] = 'No puede ser anterior a hoy';
             }
         }
 
