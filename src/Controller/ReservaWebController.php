@@ -6,7 +6,11 @@ namespace App\Controller;
 
 use App\Domain\ReservaFiltros;
 use App\Service\ReservaService;
+use App\Domain\ReservaNotFoundException;
+use App\Http\HttpException;
 use Twig\Environment;
+
+
 
 final class ReservaWebController
 {
@@ -24,6 +28,19 @@ final class ReservaWebController
         echo $this->twig->render('reservas/listado.html.twig',[
             'titulo' => 'Reservas',
             'reservas' => $reservas
+        ]);
+    }
+
+        public function detalle(string $id): void
+    {
+        try {
+            $reserva = $this->service->getById((int) $id);
+        } catch (ReservaNotFoundException $e) {
+            throw new HttpException(404, 'Reserva no encontrada');
+        }
+        echo $this->twig->render('reservas/detalle.html.twig',[
+            'titulo' => 'Reserva' . $reserva['id'],
+            'reserva' => $reserva
         ]);
     }
 }

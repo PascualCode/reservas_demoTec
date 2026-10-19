@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}
+    <a href="/reservas">Volver al listado</a>
+    <h1>{{ titulo }}</h1> 
+    <dl>
+        <dt>Huesped</dt>
+        <dd>{{ reserva.nombre_huesped }}</dd>
+
+        <dt>Email</dt>
+        <dd>{{ reserva.email_huesped }}</dd>
+    
+        <dt>Alojamiento</dt>
+        <dd>{{ reserva.nombre_alojamiento }}</dd>
+    
+        <dt>Entrada</dt>
+        <dd>{{ reserva.fecha_entrada|date('d/m/Y') }}</dd>
+    
+        <dt>Salida</dt>
+        <dd>{{ reserva.fecha_salida|date('d/m/Y') }}</dd>
+    
+        <dt>Estado</dt>
+        <dd><span class="estado estado--{{ reserva.estado }}">{{ reserva.estado|capitalize }}</span></dd>
+    
+        <dt>Importe</dt>
+        <dd>{{ reserva.importe|number_format(2, ',', '.') }} €</dd>
+    
+        <dt>Notas</dt>
+        <dd>
+            {% if reserva.notas %}
+                {{ reserva.notas|nl2br }}
+            {% else %}
+                Sin notas
+            {% endif %}
+        </dd>
+    
+        <dt>Fecha de Creacion</dt>
+        <dd>{{ reserva.fecha_creacion|date('d/m/Y H:i') }}</dd>
+    
+    </dl>
+
+    <h2>Historial</h2>
+    <ol>
+        {% for evento in reserva.eventos %}
+        <li>{{ evento.fecha_creacion|date('d/m/Y H:i') }} -- {{ evento.descripcion }}</li>
+        {% endfor %}
+    </ol>
+{% endblock %}

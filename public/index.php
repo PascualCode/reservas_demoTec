@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Config\Config;
 use App\Controller\ReservaWebController;
 use App\Http\ErrorHandler;
-use App\Http\JsonResponse;
 use App\Http\Router;
 use App\Repository\ReservaRepository;
 use App\Service\ReservaService;
@@ -56,9 +55,7 @@ try {
 
     $router->add('GET', '/reservas', $webController->listado(...));
 
-    $router->add('GET', '/reservas/{id}', function (string $id): void {
-        JsonResponse::send(['mensaje' => "Detalle de la reserva {$id} (pendiente)"]);
-    });
+    $router->add('GET', '/reservas/{id}', $webController->detalle(...));
 
     $router->add('GET', '/api/reservas/{id}', $apiController->detalle(...));
 
