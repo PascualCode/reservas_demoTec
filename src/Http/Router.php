@@ -47,7 +47,7 @@ final class Router
             }
         }
         // Al terminar: si hay métodos permitidos → 405 con cabecera Allow; si no → 404
-        if (!empty($allowedMethods)) {
+        if ($allowedMethods !== []) {
             throw new HttpException(405, 'Método no permitido', ['Allow' => implode(', ', $allowedMethods)]);
         } else {
             throw new HttpException(404, 'Recurso no encontrado');

@@ -59,7 +59,7 @@ final class ReservaApiController
         $datos = $this->leerJson();
         $valor = $datos['estado'] ?? null;
         $nuevo = is_string($valor) ? EstadoReserva::tryFrom($valor) : null;
-        if ($nuevo === null) {
+        if ($nuevo === null || $nuevo === EstadoReserva::Pendiente) {
             throw new ValidationException(['estado' => 'Estado no válido. Valores permitidos: confirmada, cancelada']);
         }
 
@@ -81,7 +81,7 @@ final class ReservaApiController
         if ($valor === null) {
             return null;
         }
-        if (!is_string($valor)) {
+        if (!is_string($valor) || !mb_check_encoding($valor, 'UTF-8')) {
             throw new ValidationException([$clave => 'Valor no válido'], 'Filtros no válidos');
         }
         $valor = trim($valor);
@@ -123,7 +123,7 @@ final class ReservaApiController
             $errores['q'] = 'La búsqueda no puede superar los 100 caracteres';
         }
 
-        if (!empty($errores)) {
+        if ($errores !== []) {
             throw new ValidationException($errores, 'Filtros no válidos');
         }
 

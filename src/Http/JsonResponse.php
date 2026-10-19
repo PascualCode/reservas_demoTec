@@ -16,6 +16,7 @@ final class JsonResponse
         // Cabeceras fijas
         header('Content-Type: application/json');
         header('X-Content-Type-Options: nosniff');
+        header('Cache-Control: no-store');
 
         // Cabeceras extra ($headers)
         foreach ($headers as $name => $value) {
