@@ -8,6 +8,7 @@ use App\Domain\ReservaFiltros;
 use App\Service\ReservaService;
 use App\Domain\ReservaNotFoundException;
 use App\Http\HttpException;
+use App\Http\HtmlResponse;
 use Twig\Environment;
 
 
@@ -25,10 +26,10 @@ final class ReservaWebController
         /* Pide todas las reservas al servicio 
            y renderiza 'reservas/listado.html.twig' con ellas */
         $reservas = $this->service->getAll(new ReservaFiltros());
-        echo $this->twig->render('reservas/listado.html.twig',[
+        echo HtmlResponse::send($this->twig->render('reservas/listado.html.twig',[
             'titulo' => 'Reservas',
             'reservas' => $reservas
-        ]);
+        ]));
     }
 
         public function detalle(string $id): void
@@ -38,9 +39,9 @@ final class ReservaWebController
         } catch (ReservaNotFoundException $e) {
             throw new HttpException(404, 'Reserva no encontrada');
         }
-        echo $this->twig->render('reservas/detalle.html.twig',[
-            'titulo' => 'Reserva' . $reserva['id'],
+        echo HtmlResponse::send($this->twig->render('reservas/detalle.html.twig',[
+            'titulo' => 'Reserva ' . $reserva['id'],
             'reserva' => $reserva
-        ]);
+        ]));
     }
 }
