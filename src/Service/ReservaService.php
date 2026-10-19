@@ -9,7 +9,7 @@ use App\Repository\ReservaRepository;
 use App\Domain\ReservaFiltros;
 use App\Validation\ReservaValidator;
 use App\Domain\EstadoReserva;
-use App\Domain\transicionNoPermitidaException;
+use App\Domain\TransicionNoPermitidaException;
 
 use DateTimeImmutable;
 

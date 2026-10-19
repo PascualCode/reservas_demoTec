@@ -6,6 +6,8 @@ namespace App\Domain;
 
 use App\Domain\EstadoReserva;
 
+use RuntimeException;
+
 final class TransicionNoPermitidaException extends RuntimeException
 {
     public function __construct(EstadoReserva $actual, EstadoReserva $nuevo)
