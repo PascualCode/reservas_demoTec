@@ -1,5 +1,6 @@
 import { pedirApi, ErrorApi } from './api.js';
 import { mostrarAviso, formatearFecha, formatearImporte, capitalizar } from './ui.js';
+import { iniciarCreacion } from './crear.js';
 
 const formulario = document.querySelector('#filtros');
 const botonFiltrar = formulario.querySelector('button[type="submit"]');
@@ -108,3 +109,5 @@ function celdaEnlace(id) {
     td.append(enlace);
     return td;
 }
+
+iniciarCreacion(cargarReservas);

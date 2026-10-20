@@ -63,6 +63,51 @@
         </tbody>
     </table>
     
+    <details>
+        <summary>Nueva reserva</summary>
+
+        <form id="form-crear">
+            <label>
+                Huésped
+                <input type="text" name="nombre_huesped" required maxlength="100" aria-describedby="error-nombre_huesped">
+            </label>
+            <p class="error-campo" id="error-nombre_huesped"></p>
+            <label>
+                Email
+                <input type="email" name="email_huesped" required maxlength="254" aria-describedby="error-email_huesped">
+            </label>
+            <p class="error-campo" id="error-email_huesped"></p>
+            <label>
+                Nombre de Alojamiento
+                <input type="text" name="nombre_alojamiento" required maxlength="254" aria-describedby="error-nombre_alojamiento">
+            </label>
+            <p class="error-campo" id="error-nombre_alojamiento"></p>
+            <label>
+                Fecha de Entrada
+                <input type="date" name="fecha_entrada" required min="{{ 'now'|date('Y-m-d') }}" aria-describedby="error-fecha_entrada">
+            </label>
+            <p class="error-campo" id="error-fecha_entrada"></p>
+            <label>
+                Fecha de Salida
+                <input type="date" name="fecha_salida" required min="{{ 'now'|date('Y-m-d') }}" aria-describedby="error-fecha_salida">
+            </label>
+            <p class="error-campo" id="error-fecha_salida"></p>
+            <label>
+                Importe
+                <input type="number" name="importe" required min="0" max="99999999.99" step="0.01" aria-describedby="error-importe">
+            </label>
+            <p class="error-campo" id="error-importe"></p>
+            <label>
+                notas
+                <textarea name="notas" maxlength="1000" aria-describedby="error-notas"></textarea>
+            </label>
+            <p class="error-campo" id="error-notas"></p>
+            <button type="submit">Crear reserva</button>
+        </form>
+
+        <p id="aviso-crear" role="status" aria-live="polite"></p>
+    </details>
+
 {% endblock %}
 
 {% block scripts %}
