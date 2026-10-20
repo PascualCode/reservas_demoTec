@@ -22,7 +22,7 @@ async function cargarReservas() {
     const parametros = new URLSearchParams();
     const form = new FormData(formulario);
     for (const [calve, valor] of form) {
-        if (valor.trim !== '') {
+        if (valor.trim() !== '') {
             parametros.append(calve, valor.trim());
         }
     }
@@ -58,7 +58,7 @@ function pintarFilas(reservas) {
 
     cuerpoTabla.replaceChildren();
 
-    if (reservas.legth === 0) {
+    if (reservas.length === 0) {
         const fila = document.createElement('tr');
         const vacia = celda('No hay reservas');
         vacia.colSpan = 7;
@@ -82,14 +82,13 @@ function pintarFilas(reservas) {
 
 }
 
-// Crea una celda <td> con el texto indicado.
+// Funciones auxuliares para la creacion de celdas.
 function celda(texto) {
     const td = document.createElement('td');
     td.textContent = texto;
     return td;
 }
 
-// Crea una celda <td> con el texto indicado.
 function celdaEstado(estado) {
     const span = document.createElement('span');
     span.className = `estado estado--${estado}`;
@@ -100,7 +99,6 @@ function celdaEstado(estado) {
     return td;
 }
 
-// Crea una celda <td> con el texto indicado.
 function celdaEnlace(id) {
     const enlace = document.createElement('a');
     enlace.href = `/reservas/${id}`;
