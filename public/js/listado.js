@@ -8,6 +8,9 @@ const botonLimpiar = document.querySelector('#limpiar-filtros');
 const cuerpoTabla = document.querySelector('#reservas-cuerpo');
 const aviso = document.querySelector('#aviso-listado');
 
+//Contador para pintar solo la ultima peticion en conexiones lentas
+let ultimaPeticion = 0;
+
 formulario.addEventListener('submit', (evento) => {
     evento.preventDefault();   // evita que el navegador envie el formulario y recargue la pagina
     cargarReservas();
@@ -20,6 +23,7 @@ botonLimpiar.addEventListener('click', () => {
 
 async function cargarReservas() {
 
+    const numero = ++ultimaPeticion;
     const parametros = new URLSearchParams();
     const form = new FormData(formulario);
     for (const [calve, valor] of form) {
@@ -33,9 +37,15 @@ async function cargarReservas() {
 
     try {
         const datos = await pedirApi(`/api/reservas?${parametros}`);
+        if (numero !== ultimaPeticion) {
+            return;   // ha llegado tarde: ya hay una petición más reciente
+        }
         pintarFilas(datos.reservas);
         mostrarAviso(aviso, `Reservas encontradas: ${datos.total}`, 'exito');
     } catch (error) {
+        if (numero !== ultimaPeticion) {
+            return;   // ha llegado tarde: ya hay una petición más reciente
+        }
         let texto;
         if (error instanceof ErrorApi) {
             // Error de la API o de la red: su mensaje está pensado para el usuario
@@ -51,7 +61,9 @@ async function cargarReservas() {
         }
         mostrarAviso(aviso, texto, 'error');
     } finally {
-        botonFiltrar.disabled = false;
+        if (numero === ultimaPeticion) {
+            botonFiltrar.disabled = false;
+        }
     }
 }
 
