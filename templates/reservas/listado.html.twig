@@ -2,6 +2,35 @@
 {% block title %}{{ titulo }}{% endblock %}
 {% block content %} 
     <h1>{{ titulo }}</h1> 
+
+    <form id="filtros">
+        <label>
+            Estado
+            <select name="estado">
+                <option value="">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="cancelada">Cancelada</option>
+            </select>
+        </label>
+        <label>
+            Desde
+            <input type="date" name="desde">
+        </label>
+        <label>
+            Hasta
+            <input type="date" name="hasta">
+        </label>
+        <label>
+            Nombre Huesped
+            <input type="search" name="q" maxlength="100">
+        </label>
+        <button type="submit">Filtrar</button>
+        <button type="button" id="limpiar-filtros">Limpiar</button>
+    </form>
+
+    <p id="aviso-listado" role="status" aria-live="polite"></p>
+
     <table>
         <thead>
             <tr>
@@ -34,4 +63,8 @@
         </tbody>
     </table>
     
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="/js/listado.js"></script>
 {% endblock %}
