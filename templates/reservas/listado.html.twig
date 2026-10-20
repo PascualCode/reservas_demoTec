@@ -31,37 +31,40 @@
 
     <p id="aviso-listado" role="status" aria-live="polite"></p>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Huésped</th>
-                <th>Alojamiento</th>
-                <th>Entrada</th>
-                <th>Salida</th>
-                <th>Estado</th>
-                <th>Importe</th>
-                <th>Ver detalle</th>
-            </tr>
-        </thead>
+    <div class="tabla-contenedor">
+        <table>
+            <thead>
+                <tr>
+                    <th>Huésped</th>
+                    <th>Alojamiento</th>
+                    <th>Entrada</th>
+                    <th>Salida</th>
+                    <th>Estado</th>
+                    <th>Importe</th>
+                    <th>Ver detalle</th>
+                </tr>
+            </thead>
 
-        <tbody id="reservas-cuerpo">
-            {% for reserva in reservas %}
-                <tr>
-                    <td>{{ reserva.nombre_huesped }}</td>
-                    <td>{{ reserva.nombre_alojamiento }}</td>
-                    <td>{{ reserva.fecha_entrada|date('d/m/Y') }}</td>
-                    <td>{{ reserva.fecha_salida|date('d/m/Y') }}</td>
-                    <td><span class="estado estado--{{ reserva.estado }}">{{ reserva.estado|capitalize }}</span></td>
-                    <td>{{ reserva.importe|number_format(2, ',', '.') }} €</td>
-                    <td><a href="/reservas/{{ reserva.id }}">Ver detalle</a></td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="7">No hay reservas</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <tbody id="reservas-cuerpo">
+                {% for reserva in reservas %}
+                    <tr>
+                        <td>{{ reserva.nombre_huesped }}</td>
+                        <td>{{ reserva.nombre_alojamiento }}</td>
+                        <td>{{ reserva.fecha_entrada|date('d/m/Y') }}</td>
+                        <td>{{ reserva.fecha_salida|date('d/m/Y') }}</td>
+                        <td><span class="estado estado--{{ reserva.estado }}">{{ reserva.estado|capitalize }}</span></td>
+                        <td>{{ reserva.importe|number_format(2, ',', '.') }} €</td>
+                        <td><a href="/reservas/{{ reserva.id }}">Ver detalle</a></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">No hay reservas</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
     
     <details>
         <summary>Nueva reserva</summary>
