@@ -24,3 +24,9 @@ export function formatearImporte(importe) {
 export function capitalizar(texto) {
     return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
+
+// '2026-10-20 18:13:00' → '20/10/2026 18:13'
+export function formatearFechaHora(fechaHora) {
+    const [fecha, hora] = fechaHora.split(' ');
+    return `${formatearFecha(fecha)} ${hora.slice(0, 5)}`;
+}

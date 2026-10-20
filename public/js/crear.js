@@ -14,8 +14,8 @@ export function iniciarCreacion(alCrear) {
 
         const datos = Object.fromEntries(new FormData(formulario));
 
-        // Validación en cliente que el HTML no puede expresar
-        if (datos.fecha_entrada && datos.fecha_salida && datos.fecha_salida <= datos.fecha_entrada) {
+        // Validación en cliente
+        if (datos.fecha_entrada && datos.fecha_salida && (datos.fecha_salida <= datos.fecha_entrada)) {
             mostrarErrores({ fecha_salida: 'Debe ser posterior a la fecha de entrada' });
             return;
         }

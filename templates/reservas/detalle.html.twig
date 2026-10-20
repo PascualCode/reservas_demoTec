@@ -20,7 +20,7 @@
         <dd>{{ reserva.fecha_salida|date('d/m/Y') }}</dd>
     
         <dt>Estado</dt>
-        <dd><span class="estado estado--{{ reserva.estado }}">{{ reserva.estado|capitalize }}</span></dd>
+        <dd><span id="estado-reserva" class="estado estado--{{ reserva.estado }}">{{ reserva.estado|capitalize }}</span></dd>
     
         <dt>Importe</dt>
         <dd>{{ reserva.importe|number_format(2, ',', '.') }} €</dd>
@@ -39,10 +39,20 @@
     
     </dl>
 
+    <section id="acciones" data-id="{{ reserva.id }}" aria-label="Acciones">
+        <button type="button" data-estado="confirmada" {% if reserva.estado != 'pendiente' %}hidden{% endif %}>Confirmar reserva</button>
+        <button type="button" data-estado="cancelada" {% if reserva.estado == 'cancelada' %}hidden{% endif %}>Cancelar reserva</button>
+        <p id="aviso-detalle" role="status" aria-live="polite"></p>
+    </section>
+
     <h2>Historial</h2>
-    <ol>
+    <ol id="historial">
         {% for evento in reserva.eventos %}
-        <li>{{ evento.fecha_creacion|date('d/m/Y H:i') }} -- {{ evento.descripcion }}</li>
+            <li>{{ evento.fecha_creacion|date('d/m/Y H:i') }} -- {{ evento.descripcion }}</li>
         {% endfor %}
     </ol>
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="/js/detalle.js"></script>
 {% endblock %}
